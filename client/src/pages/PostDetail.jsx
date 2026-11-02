@@ -46,6 +46,13 @@ export default function PostDetail() {
 
   return (
     <Layout>
+      {post && (
+        <header className="mb-2 border-b border-line pb-8">
+          <h2 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">Stories worth sharing</h2>
+          <p className="mt-3 text-lg text-muted">Read what the community is writing — or write your own.</p>
+          <Link to="/" className="mt-4 inline-block text-sm text-muted hover:text-ink">← All stories</Link>
+        </header>
+      )}
       {notFound && <EmptyState title="Story not found" text="It may have been deleted." actionTo="/" actionLabel="Back to home" />}
       {error && <ErrorState message={error} onRetry={load} />}
       {!post && !error && !notFound && <div className="flex justify-center py-20"><Spinner /></div>}
@@ -83,7 +90,6 @@ export default function PostDetail() {
             postId={post.id}
             onCountChange={(d) => setPost((p) => ({ ...p, comment_count: p.comment_count + d }))}
           />
-          <Link to="/" className="mt-10 inline-block text-sm text-muted hover:text-ink">← All stories</Link>
         </>
       )}
     </Layout>
