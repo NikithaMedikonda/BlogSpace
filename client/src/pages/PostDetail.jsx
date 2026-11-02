@@ -50,7 +50,9 @@ export default function PostDetail() {
         <header className="mb-2 border-b border-line pb-8">
           <h2 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">Stories worth sharing</h2>
           <p className="mt-3 text-lg text-muted">Read what the community is writing — or write your own.</p>
-          <Link to="/" className="mt-4 inline-block text-sm text-muted hover:text-ink">← All stories</Link>
+          <div className="pt-4">
+            <Link to="/" className="inline-block text-sm text-muted hover:text-ink">← All stories</Link>
+          </div>
         </header>
       )}
       {notFound && <EmptyState title="Story not found" text="It may have been deleted." actionTo="/" actionLabel="Back to home" />}

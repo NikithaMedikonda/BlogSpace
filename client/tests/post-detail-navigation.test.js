@@ -15,7 +15,7 @@ test('post detail places a single All stories link below the stories heading and
   assert.ok(headingIndex >= 0, 'stories heading is present')
   assert.ok(descriptionIndex > headingIndex, 'description follows the heading')
   assert.ok(linkIndex > descriptionIndex, 'navigation follows the description')
-  assert.match(header, /<Link to="\/"[^>]*>← All stories<\/Link>/, 'navigation targets the stories listing')
+  assert.match(header, /<div className="pt-4">\s*<Link to="\/"[^>]*>← All stories<\/Link>\s*<\/div>/, 'navigation is on its own line with padding above')
   assert.equal((source.match(/← All stories/g) || []).length, 1, 'navigation is not duplicated at the bottom')
 })
 
