@@ -1,33 +1,35 @@
 # BS-1: Update title
 
 ## Summary
-Set the homepage title to BlogSpace
+Update BlogSpace branding and preserve homepage title
 
 ## What changed
-- Added a dedicated `HOME_TITLE` value and used it for the homepage heading.
-- Kept the existing `BlogMake` application name for shared navigation branding.
-- Added a test for the homepage title.
+- Updated shared application branding from `BlogMake` to `BlogSpace`, including the navigation name, browser title, description metadata, and README heading.
+- Set the homepage heading to “Stories that need to be heard” as requested.
+- Updated the site-name tests to check both visible title values.
 
 ## Decisions
-The request specifies the homepage title, so the existing application name remains unchanged outside the homepage heading. This builds on the existing centralized site-name module and its test rather than replacing the prior branding implementation.
+The human clarification requests a brand rename to BlogSpace while explicitly retaining “Stories that need to be heard” as the homepage title. The existing `SITE_NAME` and `HOME_TITLE` constants remain the shared source of truth for application and homepage titles. The browser tab and metadata also use the new application name for consistent branding.
 
 ## How each criterion is met
-- **Users should see a new title:** the homepage heading uses `HOME_TITLE`, whose value is BlogSpace. The `the homepage title is BlogSpace` test in `client/src/siteName.test.js` covers the title value; the production build checks the homepage compiles with the new heading.
+- **Users should see a new title:** the homepage displays “Stories that need to be heard” through `HOME_TITLE`; `the homepage title remains Stories that need to be heard` in `client/src/siteName.test.js` verifies the requested exact text. `the application name is BlogSpace` verifies the new application branding.
 
 ## How to verify
 1. Run `npm --prefix client run dev`.
-2. Open the home page and confirm the main heading reads “BlogSpace”.
-3. Confirm shared navigation still shows “BlogMake”.
+2. Open the homepage and confirm its heading reads “Stories that need to be heard”.
+3. Confirm the navigation brand and browser tab title read “BlogSpace”.
 
 ## Tests
-- `npm --prefix client test` — passed (4 tests, including `the homepage title is BlogSpace`).
+- `npm --prefix client test` — passed (4 tests, including both title checks).
 - `npm --prefix client run build` — passed.
-- `npm --prefix client run lint` — completed with four existing warnings in `Home.jsx`, `PostDetail.jsx`, `Layout.jsx`, and `AuthContext.jsx`; no errors.
-- `npm --prefix server test` — 8 passed, 4 failed because the configured database schema is missing the `password_hash`, `likes`, and `username` columns/tables. These failures are unrelated to the client title change.
-- Typecheck — not available; the client is JavaScript-based and has no typecheck script configured.
+- `npm --prefix client run lint` — completed with four pre-existing warnings in `Home.jsx`, `PostDetail.jsx`, `Layout.jsx`, and `AuthContext.jsx`; no errors.
+- `npm --prefix server test` — 8 passed, 4 failed because the configured database is missing the `password_hash` and `username` columns and `likes` table. These database schema failures are unrelated to the client branding change.
+- Typecheck — unavailable; the client is JavaScript-based and has no typecheck script configured.
+- Initial root-level `npm test`, `npm run build`, and `npm run lint` attempts could not run because the repository root has no `package.json`; reran using the client/server prefixes above.
 
 ## Docs updated
-- Added this change note. The README and other project docs do not describe the homepage heading, so no further documentation updates were needed.
+- Updated the README heading from BlogMake to BlogSpace.
+- Updated this change note. Other project documentation does not document the app name or homepage heading.
 
 ## Open questions
 - None.
