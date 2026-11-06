@@ -1,4 +1,4 @@
-# BlogMake
+# BlogSpace
 
 Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages.
 
