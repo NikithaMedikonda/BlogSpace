@@ -5,6 +5,7 @@ import AuthLayout from '../components/AuthLayout'
 import FormField from '../components/FormField'
 import Alert from '../components/Alert'
 import { btnPrimary } from '../components/ui'
+import { SITE_NAME } from '../siteName'
 
 export default function Login() {
   const { login, user } = useAuth()
@@ -41,7 +42,7 @@ export default function Login() {
   if (user && !success) return <Navigate to="/" replace />
 
   return (
-    <AuthLayout subtitle="Sign in to continue to BlogSpace." title="Welcome back" footer={<>New here? <Link className="font-medium text-ink underline" to="/signup">Create an account</Link></>}>
+    <AuthLayout subtitle={`Sign in to continue to ${SITE_NAME}.`} title="Welcome back" footer={<>New here? <Link className="font-medium text-ink underline" to="/signup">Create an account</Link></>}>
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <Alert type="success">{success}</Alert>
         <Alert>{formError}</Alert>
