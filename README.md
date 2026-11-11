@@ -1,6 +1,6 @@
 # BlogSpace
 
-Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages and a “Blog. Read. Repeat” banner on the homepage.
+Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages and a “Repeat. Blog. Read.” banner on the homepage.
 
 ## Setup
 1. `createdb blogspace`

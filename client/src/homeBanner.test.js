@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { createServer } from 'vite'
 
-test('homepage renders a banner with Blog. Read. Repeat', async () => {
+test('homepage renders a banner with Repeat. Blog. Read.', async () => {
   const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom' })
   try {
     const { default: App } = await vite.ssrLoadModule('/src/App.jsx')
@@ -15,7 +15,7 @@ test('homepage renders a banner with Blog. Read. Repeat', async () => {
         createElement(AuthProvider, null, createElement(App))),
     )
 
-    assert.match(html, /<aside aria-label="Homepage banner"[^>]*><p[^>]*>Blog\. Read\. Repeat<\/p><\/aside>/)
+    assert.match(html, /<aside aria-label="Homepage banner"[^>]*><p[^>]*>Repeat\. Blog\. Read\.<\/p><\/aside>/)
   } finally {
     await vite.close()
   }
