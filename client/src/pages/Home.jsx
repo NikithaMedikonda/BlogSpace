@@ -21,6 +21,9 @@ export default function Home() {
 
   return (
     <Layout>
+      <aside aria-label="Homepage banner" className="mb-8 rounded-lg bg-ink px-6 py-8 text-center text-white sm:py-10">
+        <p className="font-serif text-3xl font-bold sm:text-4xl">Repeat. Blog. Read.</p>
+      </aside>
       <header className="mb-2 border-b border-line pb-8">
         <h1 className="font-serif text-4xl font-bold tracking-tight sm:text-5xl">{HOME_TITLE}</h1>
         <p className="mt-3 text-lg text-muted">Read what the community is writing — or write your own.</p>

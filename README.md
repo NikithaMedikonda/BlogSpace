@@ -1,6 +1,6 @@
 # BlogSpace
 
-Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages.
+Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages and a “Repeat. Blog. Read.” banner on the homepage.
 
 ## Setup
 1. `createdb blogspace`
@@ -12,4 +12,4 @@ Set `CLIENT_ORIGIN` in `server/.env` to the Vite URL.
 
 Reading time is calculated from each post's full content at 200 words per minute, rounded up with a one-minute minimum. It is shown on post cards and below the title on each post page.
 
-Tests: `cd client && npm test` (reading-time calculation); `cd server && npm test` (API, requires the API to be running).
+Tests: `cd client && npm test` (client unit and homepage rendering tests); `cd server && npm test` (API, requires the API to be running).
