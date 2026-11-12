@@ -1,6 +1,6 @@
 # BlogSpace
 
-Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner and a plain-text Contact label in the footer across its pages.
+Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner and a prominent, non-interactive `Contact` label in the footer across its pages.
 
 ## Setup
 1. `createdb blogspace`

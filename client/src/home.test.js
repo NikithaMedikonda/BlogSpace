@@ -16,8 +16,9 @@ test('home footer displays Contact as plain text without a link', async () => {
     )
     const footer = html.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/)?.[1]
     assert.ok(footer, 'home page should render a footer')
-    assert.match(footer, /<p\b[^>]*>Contact<\/p>/)
-    assert.doesNotMatch(footer, /<a\b|<button\b/i)
+    assert.match(footer, /© .*BlogSpace/)
+    assert.match(footer, /<p class="mt-2 text-base font-semibold text-ink">Contact<\/p>/)
+    assert.doesNotMatch(footer, /<a\b|<button\b|\bhidden\b|aria-hidden/i)
   } finally {
     await vite.close()
   }
