@@ -12,7 +12,10 @@ export default function Layout({ children }) {
         Welcome to {SITE_NAME} — a home for stories worth sharing.
       </aside>
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-10 sm:px-6">{children}</main>
-      <footer className="border-t border-line py-6 text-center text-sm text-muted">© {new Date().getFullYear()} {SITE_NAME}</footer>
+      <footer className="border-t border-line py-6 text-center">
+        <p className="text-sm text-muted">© {new Date().getFullYear()} {SITE_NAME}</p>
+        <p className="mt-2 text-base font-semibold text-ink">Contact</p>
+      </footer>
     </div>
   )
 }
