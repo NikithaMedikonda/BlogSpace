@@ -12,4 +12,6 @@ Set `CLIENT_ORIGIN` in `server/.env` to the Vite URL.
 
 Reading time is calculated from each post's full content at 200 words per minute, rounded up with a one-minute minimum. It is shown on post cards and below the title on each post page.
 
-Tests: `cd client && npm test` (reading-time calculation); `cd server && npm test` (API, requires the API to be running).
+Like hearts are red on post cards and post pages, including for signed-out visitors and both like states.
+
+Tests: `cd client && npm test` (reading time, site name, and like-heart display); `cd server && npm test` (API, requires the API and database to be running).

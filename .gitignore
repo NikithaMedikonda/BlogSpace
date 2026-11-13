@@ -3,5 +3,10 @@ node_modules
 .env.*
 !.env.example
 dist
+build
+coverage
+.cache
+__pycache__
+*.py[cod]
 *.log
 .DS_Store
