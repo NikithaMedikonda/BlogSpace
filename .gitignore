@@ -1,7 +1,13 @@
 node_modules
+.venv
+venv
 .env
 .env.*
 !.env.example
 dist
+coverage
+.cache
+__pycache__
+*.py[cod]
 *.log
 .DS_Store
