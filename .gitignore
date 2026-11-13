@@ -1,4 +1,6 @@
 node_modules
+.venv
+venv
 .env
 .env.*
 !.env.example
@@ -9,7 +11,5 @@ coverage
 .vite
 __pycache__
 *.py[cod]
-.venv
-venv
 *.log
 .DS_Store

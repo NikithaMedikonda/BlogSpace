@@ -50,8 +50,8 @@ export default function Comments({ postId, onCountChange }) {
   }
 
   return (
-    <section className="mt-10" aria-label="Comments">
-      <h2 className="mb-5 font-serif text-2xl font-bold">Comments{comments ? ` (${comments.length})` : ''}</h2>
+    <section className="mt-10" aria-label="Suggestions">
+      <h2 className="mb-5 font-serif text-2xl font-bold">Suggestions{comments ? ` (${comments.length})` : ''}</h2>
       <Alert>{error}</Alert>
 
       {user ? (
