@@ -8,7 +8,7 @@ import react from '@vitejs/plugin-react'
 
 const server = await createServer({
   configFile: false,
-  server: { middlewareMode: true },
+  server: { middlewareMode: true, ws: false },
   plugins: [
     {
       name: 'test-auth',
@@ -28,6 +28,17 @@ test.after(async () => { await server.close() })
 const { default: LikeButton } = await server.ssrLoadModule('/src/components/LikeButton.jsx')
 const { default: PostCard } = await server.ssrLoadModule('/src/components/PostCard.jsx')
 const render = (element) => renderToStaticMarkup(React.createElement(MemoryRouter, null, element))
+
+test('like heart utility generates red text in the app stylesheet', async () => {
+  const appServer = await createServer({ server: { middlewareMode: true, ws: false } })
+  try {
+    const css = (await appServer.transformRequest('/src/index.css?direct')).code
+    assert.match(css, /\.text-red-600\s*\{\s*color:\s*var\(--color-red-600\);\s*\}/)
+    assert.match(css, /--color-red-600:\s*oklch\(57\.7% 0\.245 27\.325\)/)
+  } finally {
+    await appServer.close()
+  }
+})
 
 test('post card displays a red heart beside the like count', () => {
   const post = { id: 1, author_name: 'Alice', title: 'Story', content: 'Content', created_at: '2025-01-01', like_count: 3, comment_count: 0 }
