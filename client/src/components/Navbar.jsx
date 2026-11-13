@@ -18,6 +18,7 @@ export default function Navbar() {
   const link = 'text-sm text-muted transition hover:text-ink'
   const items = user ? (
     <>
+      <NavLink to="/activity" onClick={close} className={link}>Activity</NavLink>
       <NavLink to="/posts/new" onClick={close} className={link}>✎ Write</NavLink>
       <span className="text-sm text-muted">{user.username}</span>
       <button onClick={onLogout} className={`${link} text-left`}>Log out</button>
