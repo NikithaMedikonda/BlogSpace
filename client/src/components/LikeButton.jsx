@@ -23,7 +23,7 @@ export default function LikeButton({ postId, liked, count, onChange }) {
 
   const label = `${count} ${count === 1 ? 'like' : 'likes'}`
   if (!user)
-    return <span className="text-sm text-muted">♡ {label} · <Link to="/login" className="font-medium text-ink underline">Sign in to like</Link></span>
+    return <span className="text-sm text-muted"><span className="text-red-600" aria-hidden="true">♡</span> {label} · <Link to="/login" className="font-medium text-ink underline">Sign in to like</Link></span>
 
   return (
     <div className="flex items-center gap-3">
@@ -33,7 +33,7 @@ export default function LikeButton({ postId, liked, count, onChange }) {
         aria-pressed={liked}
         className={`rounded-full border px-4 py-1.5 text-sm font-medium transition disabled:opacity-60 ${liked ? 'border-ink bg-ink text-white' : 'border-line text-ink hover:border-ink'}`}
       >
-        {liked ? '♥ Liked' : '♡ Like'} · {label}
+        <span className="text-red-600" aria-hidden="true">{liked ? '♥' : '♡'}</span> {liked ? 'Liked' : 'Like'} · {label}
       </button>
       {error && <span className="text-sm text-red-600">{error}</span>}
     </div>
