@@ -6,6 +6,7 @@ import healthRoutes from './routes/health.js'
 import authRoutes from './routes/auth.js'
 import postRoutes from './routes/posts.js'
 import commentRoutes from './routes/comments.js'
+import activityRoutes from './routes/activity.js'
 import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
@@ -16,6 +17,7 @@ app.use('/api/health', healthRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/posts', postRoutes)
 app.use('/api/comments', commentRoutes)
+app.use('/api/activity', activityRoutes)
 app.use(errorHandler)
 
 export default app

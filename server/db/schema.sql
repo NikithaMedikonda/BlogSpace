@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS likes (
   CONSTRAINT uq_likes_user_post UNIQUE (user_id, post_id)
 );
 CREATE INDEX IF NOT EXISTS idx_likes_post_id ON likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_likes_user_id ON likes(user_id);
 
 CREATE TABLE IF NOT EXISTS comments (
   id         BIGSERIAL PRIMARY KEY,

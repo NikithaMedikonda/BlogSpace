@@ -1,4 +1,42 @@
-# Display reading time on blog posts
+# Activity tab
+
+## Summary
+Add a private activity tab
+
+## What changed
+- Added a protected Activity page, desktop/mobile navigation, refresh, pagination, and loading, empty and error states.
+- Added an authenticated feed derived from posts, comments and likes, plus a likes-user index in the schema and migration.
+
+## Decisions
+- Following the human's request to use judgment, chose a private current-state feed of the user's posts and engagement and others' engagement on their posts. These are useful existing activity signals without exposing account details or inventing an audit log; deleted or undone actions disappear. Existing records are included.
+- Self-engagement is returned once. Offset pagination is deterministic for a fixed dataset but may shift when activity changes; refresh reloads from the start.
+
+## How each criterion is met
+- Activity tab and tracked information: `activity is private, scoped, deduplicated, ordered and paginated; removals disappear` exercises own and others' activity, scope, ties, paging and removal against the live API; `activity request includes credentials and pagination` checks the client request. Page navigation and rendering still require manual verification.
+- Privacy and input handling: `activity requires auth and validates pagination before querying`, `activity uses authenticated identity and requests one extra row for pagination`, and `protected routes reject anonymous and forged tokens` cover authentication, bounds and identity. The live activity test checks sensitive fields and unrelated activity are excluded.
+- Failure paths: `activity returns a safe error on database failure` and `activity request exposes errors for retry` cover server and client errors. Retry rendering requires manual verification.
+
+## How to verify
+- Set up PostgreSQL and the API as in README, run `cd server && node scripts/migrate.js` for an existing database, then run `npm test` with the API running.
+- Sign in on desktop and mobile, open Activity, inspect links and comment text, exercise load more and refresh after deleting or undoing engagement; sign out and visit `/activity` to check the login redirect.
+- With no activity check the empty state; interrupt the API to check error/retry and restore it. Run client tests, build and lint.
+
+## Tests
+- Added `server/tests/activity.test.js` (stubbed route/auth/error tests) and expanded `server/tests/api.test.js` (live feed integration); added `client/src/activity.test.js` (API request/error tests).
+- `cd server && node --test tests/activity.test.js`: passed (3).
+- `cd server && npm test`: 3 passed; 12 integration tests and their cleanup failed because no API or PostgreSQL is listening on ports 5001/5432. Live SQL, migration and UI flows remain unverified in this environment.
+- `cd client && npm test`: passed (6); `npm run build`: passed; `npm run lint`: passed with four pre-existing warnings in Layout, AuthContext, Home and PostDetail.
+- No typecheck scripts are configured; no server lint script is configured.
+
+## Docs updated
+- `README.md`: Activity scope, API, migration and verification prerequisites.
+
+## Open questions
+- None; scope and retention chosen as requested. Live integration and browser verification remain to be run with infrastructure available.
+
+---
+
+# Earlier change: Display reading time on blog posts
 
 ## Summary
 Display dynamic reading times on blog posts

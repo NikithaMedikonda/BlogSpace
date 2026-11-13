@@ -62,10 +62,12 @@ test('login ok / wrong password / unknown user', async () => {
 })
 
 test('protected routes reject anonymous and forged tokens', async () => {
-  for (const [m, p] of [['GET', '/auth/me'], ['POST', '/posts'], ['DELETE', '/posts/1'], ['POST', '/posts/1/like'], ['DELETE', '/posts/1/like'], ['POST', '/posts/1/comments'], ['DELETE', '/comments/1']])
+  for (const [m, p] of [['GET', '/auth/me'], ['GET', '/activity'], ['POST', '/posts'], ['DELETE', '/posts/1'], ['POST', '/posts/1/like'], ['DELETE', '/posts/1/like'], ['POST', '/posts/1/comments'], ['DELETE', '/comments/1']])
     assert.equal((await anon(m, p, m === 'POST' ? {} : undefined)).status, 401, `${m} ${p}`)
-  const res = await fetch(API + '/auth/me', { headers: { Authorization: 'Bearer a.b.c' } })
-  assert.equal(res.status, 401)
+  for (const path of ['/auth/me', '/activity']) {
+    const res = await fetch(API + path, { headers: { Authorization: 'Bearer a.b.c' } })
+    assert.equal(res.status, 401)
+  }
 })
 
 test('create post: validation + success', async () => {
@@ -120,6 +122,59 @@ test('delete post: only owner; cascades likes/comments', async () => {
   const { rows } = await pool.query(
     'SELECT (SELECT COUNT(*) FROM likes WHERE post_id=$1)::int l, (SELECT COUNT(*) FROM comments WHERE post_id=$1)::int c', [postId])
   assert.deepEqual(rows[0], { l: 0, c: 0 })
+})
+
+test('activity is private, scoped, deduplicated, ordered and paginated; removals disappear', async () => {
+  const charlie = client()
+  assert.equal((await charlie('POST', '/auth/signup', creds('charlie'))).status, 201)
+  assert.deepEqual((await charlie('GET', '/activity')).body, { activity: [], hasMore: false })
+  const makePost = async (who, title) => (await who('POST', '/posts', { title, content: 'A sufficiently long story.' })).body.post.id
+  const a = await makePost(alice, 'Alice activity post')
+  const b = await makePost(bob, 'Bob activity post')
+  const c = await makePost(charlie, 'Unrelated activity post')
+  const self = (await alice('POST', `/posts/${a}/comments`, { content: 'self comment' })).body.comment.id
+  const other = (await bob('POST', `/posts/${a}/comments`, { content: 'other comment' })).body.comment.id
+  await alice('POST', `/posts/${b}/comments`, { content: 'on another post' })
+  await alice('POST', `/posts/${a}/like`)
+  await bob('POST', `/posts/${a}/like`)
+  await alice('POST', `/posts/${b}/like`)
+  await bob('POST', `/posts/${c}/like`)
+  await pool.query("UPDATE comments SET created_at = '2030-01-01T00:00:00Z' WHERE id = $1", [other])
+  assert.equal((await alice('GET', '/activity?limit=50')).body.activity[0].event_id, other)
+  // Force timestamp ties, including within a type, to exercise the secondary sort keys.
+  for (const table of ['posts', 'comments', 'likes'])
+    await pool.query(`UPDATE ${table} SET created_at = '2020-01-01T00:00:00Z' WHERE ${table === 'posts' ? 'id' : 'post_id'} = ANY($1::bigint[])`, [[a, b, c]])
+  let r = await alice('GET', '/activity?user_id=999999&limit=50')
+  assert.equal(r.status, 200)
+  const entries = r.body.activity
+  assert.equal(entries.length, 7)
+  assert.equal(entries.filter((e) => e.type === 'comment' && e.event_id === self).length, 1)
+  assert.equal(entries.filter((e) => e.type === 'like' && e.actor_name === creds('alice').username && e.post_id === a).length, 1)
+  assert.ok(entries.some((e) => e.event_id === other && e.comment === 'other comment'))
+  assert.ok(entries.some((e) => e.post_id === b && e.actor_name === creds('alice').username))
+  assert.ok(entries.every((e) => e.post_id !== c && !('email' in e) && !('password_hash' in e)))
+  assert.deepEqual(entries.map((e) => `${e.type}:${e.event_id}`), [...entries].sort((x, y) => x.type.localeCompare(y.type) || Number(y.event_id) - Number(x.event_id)).map((e) => `${e.type}:${e.event_id}`))
+  const pages = []
+  for (let offset = 0; offset < entries.length; offset += 2) {
+    const page = (await alice('GET', `/activity?limit=2&offset=${offset}`)).body
+    pages.push(...page.activity)
+    assert.equal(page.hasMore, offset + 2 < entries.length)
+  }
+  assert.deepEqual(pages, entries)
+  assert.deepEqual((await alice('GET', '/activity?offset=100')).body, { activity: [], hasMore: false })
+  for (const query of ['limit=0', 'limit=51', 'limit=1x', 'limit=1&limit=2', 'offset=-1', 'offset=1000001'])
+    assert.equal((await alice('GET', `/activity?${query}`)).status, 400)
+  await bob('DELETE', `/comments/${other}`)
+  await alice('DELETE', `/posts/${a}/like`)
+  r = await alice('GET', '/activity?limit=50')
+  assert.equal(r.body.activity.length, 5)
+  assert.ok(!r.body.activity.some((e) => e.type === 'comment' && e.event_id === other))
+  assert.ok(!r.body.activity.some((e) => e.type === 'like' && e.actor_name === creds('alice').username && e.post_id === a))
+  await alice('DELETE', `/posts/${a}`)
+  r = await alice('GET', '/activity?limit=50')
+  assert.equal(r.body.activity.length, 2)
+  assert.ok(r.body.activity.every((e) => e.post_id === b))
+  assert.ok(!(await bob('GET', '/activity?limit=50')).body.activity.some((e) => e.post_id === a))
 })
 
 test('logout clears cookie', async () => {
