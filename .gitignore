@@ -5,8 +5,10 @@ venv
 .env.*
 !.env.example
 dist
+dist-ssr
 coverage
 .cache
+.vite
 __pycache__
 *.py[cod]
 *.log
