@@ -1,6 +1,12 @@
 # BlogSpace
 
-Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, PostgreSQL. The app displays a welcome banner across its pages.
+Full-stack blogging app with a welcome banner across its pages.
+
+## Tech stack
+- **Frontend:** React and React Router, built with Vite and styled with Tailwind CSS.
+- **Backend:** Node.js and Express provide the API; JWT and bcrypt handle authentication and password hashing.
+- **Database:** PostgreSQL, accessed from the server with node-postgres (`pg`).
+- **Testing and linting:** Node.js test runner and Oxlint (client).
 
 ## Setup
 1. `createdb blogspace`
