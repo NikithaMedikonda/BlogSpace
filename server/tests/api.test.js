@@ -27,6 +27,7 @@ let postId, commentId
 
 test.after(async () => {
   await pool.query('DELETE FROM users WHERE username LIKE $1', [`${tag}_%`])
+  await pool.query('DELETE FROM categories WHERE name = $1', [`Topic ${tag}`])
   await pool.end()
 })
 
@@ -71,17 +72,32 @@ test('protected routes reject anonymous and forged tokens', async () => {
 test('create post: validation + success', async () => {
   let r = await alice('POST', '/posts', { title: 'x', content: 'y' })
   assert.equal(r.status, 400)
-  r = await alice('POST', '/posts', { title: 'Hello world', content: 'This is my first story.' })
+  for (const category of [undefined, '  ', 'x'.repeat(51), 42]) {
+    r = await alice('POST', '/posts', { title: 'Hello world', content: 'This is my first story.', category })
+    assert.equal(r.status, 400); assert.ok(r.body.errors.category)
+  }
+  r = await alice('POST', '/posts', { title: 'Hello world', content: 'This is my first story.', category: ' Technology ' })
   assert.equal(r.status, 201); postId = r.body.post.id
+  assert.equal(r.body.post.category, 'Technology')
   assert.equal(r.body.post.author_name, creds('alice').username); assert.ok(r.body.post.created_at)
 })
 
 test('list + get posts (public), 404s', async () => {
   const list = await anon('GET', '/posts')
-  assert.ok(list.body.posts.some((p) => p.id === postId))
-  assert.equal((await anon('GET', `/posts/${postId}`)).body.post.title, 'Hello world')
+  assert.equal(list.body.posts.find((p) => p.id === postId).category, 'Technology')
+  const post = (await anon('GET', `/posts/${postId}`)).body.post
+  assert.equal(post.title, 'Hello world'); assert.equal(post.category, 'Technology')
   assert.equal((await anon('GET', '/posts/999999')).status, 404)
   assert.equal((await anon('GET', '/posts/abc')).status, 404)
+})
+
+test('custom categories persist and are suggested after their post is deleted', async () => {
+  const category = `Topic ${tag}`
+  const created = await alice('POST', '/posts', { title: 'New topic', content: 'A story about a new topic.', category })
+  assert.equal(created.status, 201)
+  assert.equal(created.body.post.category, category)
+  assert.equal((await alice('DELETE', `/posts/${created.body.post.id}`)).status, 200)
+  assert.ok((await anon('GET', '/categories')).body.categories.includes(category))
 })
 
 test('likes: add, idempotent, count, liked_by_me, unlike', async () => {
