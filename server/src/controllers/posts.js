@@ -6,7 +6,7 @@ export async function getPosts(req, res, next) {
   try {
     const limit = Math.min(Math.max(parseInt(req.query.limit) || 20, 1), 50)
     const offset = Math.max(parseInt(req.query.offset) || 0, 0)
-    res.json({ posts: await listPosts({ limit, offset }) })
+    res.json({ posts: await listPosts({ limit, offset, viewerId: req.user?.id ?? null }) })
   } catch (e) { next(e) }
 }
 

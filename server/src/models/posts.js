@@ -4,6 +4,7 @@ const SELECT = `
   SELECT p.id, p.title, p.content, p.created_at, p.user_id,
          u.username AS author_name,
          (SELECT COUNT(*)::int FROM likes    l WHERE l.post_id = p.id) AS like_count,
+         (SELECT COUNT(*)::int FROM reposts r WHERE r.post_id = p.id) AS repost_count,
          (SELECT COUNT(*)::int FROM comments c WHERE c.post_id = p.id) AS comment_count
     FROM posts p JOIN users u ON u.id = p.user_id`
 
@@ -15,15 +16,16 @@ export async function createPost({ userId, title, content }) {
   return getPostById(rows[0].id)
 }
 
-export async function listPosts({ limit = 20, offset = 0 } = {}) {
-  const { rows } = await query(`${SELECT} ORDER BY p.created_at DESC, p.id DESC LIMIT $1 OFFSET $2`, [limit, offset])
+export async function listPosts({ limit = 20, offset = 0, viewerId = null } = {}) {
+  const { rows } = await query(`SELECT s.*, EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = s.id AND r.user_id = $3) AS reposted_by_me FROM (${SELECT}) s ORDER BY s.created_at DESC, s.id DESC LIMIT $1 OFFSET $2`, [limit, offset, viewerId])
   return rows
 }
 
 // viewerId (optional) adds liked_by_me for that user.
 export async function getPostById(id, viewerId = null) {
   const { rows } = await query(
-    `SELECT s.*, EXISTS (SELECT 1 FROM likes l WHERE l.post_id = s.id AND l.user_id = $2) AS liked_by_me
+    `SELECT s.*, EXISTS (SELECT 1 FROM likes l WHERE l.post_id = s.id AND l.user_id = $2) AS liked_by_me,
+            EXISTS (SELECT 1 FROM reposts r WHERE r.post_id = s.id AND r.user_id = $2) AS reposted_by_me
        FROM (${SELECT} WHERE p.id = $1) s`,
     [id, viewerId]
   )

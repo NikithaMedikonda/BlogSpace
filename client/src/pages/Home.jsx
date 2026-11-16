@@ -17,7 +17,7 @@ export default function Home() {
     fetchPosts().then((d) => setPosts(d.posts)).catch((e) => setError(e.message || 'Could not load posts'))
   }, [])
 
-  useEffect(load, [load])
+  useEffect(load, [load, user?.id])
 
   return (
     <Layout>
@@ -36,7 +36,7 @@ export default function Home() {
           actionLabel={user ? 'Write a story' : 'Get started'}
         />
       )}
-      {posts?.map((p) => <PostCard key={p.id} post={p} />)}
+      {posts?.map((p) => <PostCard key={p.id} post={p} onRepost={(u) => setPosts((items) => items?.map((item) => item.id === p.id ? { ...item, reposted_by_me: u.reposted, repost_count: u.repost_count } : item))} />)}
     </Layout>
   )
 }

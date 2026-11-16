@@ -1,5 +1,6 @@
 import { getPostById } from '../models/posts.js'
 import { addLike, removeLike, countLikes } from '../models/likes.js'
+import { addRepost, removeRepost, countReposts } from '../models/reposts.js'
 import { addComment, listComments, getComment, getCommentWithAuthor, deleteComment } from '../models/comments.js'
 
 const parseId = (v) => (/^\d{1,15}$/.test(v) ? v : null)
@@ -29,6 +30,24 @@ export async function unlike(req, res, next) {
     if (!id) return
     await removeLike(req.user.id, id)
     res.json({ liked: false, like_count: await countLikes(id) })
+  } catch (e) { next(e) }
+}
+
+export async function repost(req, res, next) {
+  try {
+    const id = await postExists(req, res)
+    if (!id) return
+    await addRepost(req.user.id, id)
+    res.json({ reposted: true, repost_count: await countReposts(id) })
+  } catch (e) { next(e) }
+}
+
+export async function unrepost(req, res, next) {
+  try {
+    const id = await postExists(req, res)
+    if (!id) return
+    await removeRepost(req.user.id, id)
+    res.json({ reposted: false, repost_count: await countReposts(id) })
   } catch (e) { next(e) }
 }
 
