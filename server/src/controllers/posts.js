@@ -23,12 +23,14 @@ export async function create(req, res, next) {
   try {
     const title = typeof req.body?.title === 'string' ? req.body.title.trim() : ''
     const content = typeof req.body?.content === 'string' ? req.body.content.trim() : ''
+    const category = typeof req.body?.category === 'string' ? req.body.category.trim() : ''
     const errors = {}
+    if (!category || category.length > 50) errors.category = 'Category must be 1-50 characters'
     if (title.length < 3 || title.length > 255) errors.title = 'Title must be 3-255 characters'
     if (content.length < 10 || content.length > 20000) errors.content = 'Content must be 10-20000 characters'
     if (Object.keys(errors).length) return res.status(400).json({ error: 'Validation failed', errors })
 
-    const post = await createPost({ userId: req.user.id, title, content })
+    const post = await createPost({ userId: req.user.id, title, content, category })
     res.status(201).json({ message: 'Post published', post })
   } catch (e) { next(e) }
 }

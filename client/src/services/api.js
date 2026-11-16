@@ -25,6 +25,7 @@ export const login = (payload) => request('/auth/login', { method: 'POST', body:
 export const logout = () => request('/auth/logout', { method: 'POST' })
 export const fetchMe = () => request('/auth/me')
 
+export const fetchCategories = () => request('/categories')
 export const fetchPosts = () => request('/posts')
 export const fetchPost = (id) => request(`/posts/${id}`)
 export const createPost = (payload) => request('/posts', { method: 'POST', body: payload })

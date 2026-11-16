@@ -9,11 +9,16 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS categories (
+  name VARCHAR(50) PRIMARY KEY CHECK (length(trim(name)) > 0)
+);
+
 CREATE TABLE IF NOT EXISTS posts (
   id         BIGSERIAL PRIMARY KEY,
   user_id    BIGINT       NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   title      VARCHAR(255) NOT NULL,
   content    TEXT         NOT NULL,
+  category   VARCHAR(50)  NOT NULL CHECK (length(trim(category)) > 0),
   created_at TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
