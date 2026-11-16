@@ -97,6 +97,36 @@ test('likes: add, idempotent, count, liked_by_me, unlike', async () => {
   assert.equal((await alice('POST', '/posts/999999/like')).status, 404)
 })
 
+test('reposts: authentication, idempotent add and undo, viewer state', async () => {
+  assert.equal((await anon('POST', `/posts/${postId}/repost`)).status, 401)
+  assert.equal((await anon('DELETE', `/posts/${postId}/repost`)).status, 401)
+  for (const id of ['abc', '999999999999999']) {
+    assert.equal((await alice('POST', `/posts/${id}/repost`)).status, 404)
+    assert.equal((await alice('DELETE', `/posts/${id}/repost`)).status, 404)
+  }
+  assert.deepEqual((await alice('POST', `/posts/${postId}/repost`)).body, { reposted: true, repost_count: 1 })
+  assert.equal((await alice('POST', `/posts/${postId}/repost`)).body.repost_count, 1)
+  assert.equal((await bob('POST', `/posts/${postId}/repost`)).body.repost_count, 2)
+  for (const [who, expected] of [[alice, true], [bob, true], [anon, false]]) {
+    const detail = (await who('GET', `/posts/${postId}`)).body.post
+    const list = (await who('GET', '/posts')).body.posts.find((p) => p.id === postId)
+    assert.equal(detail.reposted_by_me, expected); assert.equal(detail.repost_count, 2)
+    assert.equal(list.reposted_by_me, expected); assert.equal(list.repost_count, 2)
+  }
+  assert.deepEqual((await bob('DELETE', `/posts/${postId}/repost`)).body, { reposted: false, repost_count: 1 })
+  assert.equal((await bob('DELETE', `/posts/${postId}/repost`)).body.repost_count, 1)
+  assert.equal((await bob('GET', `/posts/${postId}`)).body.post.reposted_by_me, false)
+  assert.equal((await bob('POST', `/posts/${postId}/repost`)).body.repost_count, 2)
+})
+
+test('reposts cascade when a user is deleted', async () => {
+  const charlie = client()
+  await charlie('POST', '/auth/signup', creds('charlie'))
+  assert.equal((await charlie('POST', `/posts/${postId}/repost`)).body.repost_count, 3)
+  await pool.query('DELETE FROM users WHERE email = $1', [creds('charlie').email])
+  assert.equal((await anon('GET', `/posts/${postId}`)).body.post.repost_count, 2)
+})
+
 test('comments: validation, create, list, counts, authz, delete', async () => {
   assert.equal((await bob('POST', `/posts/${postId}/comments`, { content: '   ' })).status, 400)
   const r = await bob('POST', `/posts/${postId}/comments`, { content: 'Great read!' })
@@ -118,8 +148,8 @@ test('delete post: only owner; cascades likes/comments', async () => {
   assert.equal((await alice('DELETE', `/posts/${postId}`)).status, 200)
   assert.equal((await anon('GET', `/posts/${postId}`)).status, 404)
   const { rows } = await pool.query(
-    'SELECT (SELECT COUNT(*) FROM likes WHERE post_id=$1)::int l, (SELECT COUNT(*) FROM comments WHERE post_id=$1)::int c', [postId])
-  assert.deepEqual(rows[0], { l: 0, c: 0 })
+    'SELECT (SELECT COUNT(*) FROM likes WHERE post_id=$1)::int l, (SELECT COUNT(*) FROM comments WHERE post_id=$1)::int c, (SELECT COUNT(*) FROM reposts WHERE post_id=$1)::int r', [postId])
+  assert.deepEqual(rows[0], { l: 0, c: 0, r: 0 })
 })
 
 test('logout clears cookie', async () => {

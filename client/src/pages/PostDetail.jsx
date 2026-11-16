@@ -6,6 +6,7 @@ import { formatDate, getReadingTime } from '../utils'
 import Layout from '../components/Layout'
 import Alert from '../components/Alert'
 import LikeButton from '../components/LikeButton'
+import RepostButton from '../components/RepostButton'
 import Comments from '../components/Comments'
 import { EmptyState, ErrorState, Spinner } from '../components/ui'
 
@@ -70,7 +71,7 @@ export default function PostDetail() {
               )}
             </div>
             <div className="mt-8 whitespace-pre-wrap break-words font-serif text-xl leading-[1.8]">{post.content}</div>
-            <div className="mt-10 flex items-center gap-6 border-y border-line py-4">
+            <div className="mt-10 flex flex-wrap items-center gap-6 border-y border-line py-4">
               <LikeButton
                 postId={post.id}
                 liked={!!user && post.liked_by_me}
@@ -78,6 +79,7 @@ export default function PostDetail() {
                 onChange={(u) => setPost((p) => ({ ...p, liked_by_me: u.liked, like_count: u.like_count }))}
               />
               <span className="text-sm text-muted">💬 {post.comment_count} {post.comment_count === 1 ? 'comment' : 'comments'}</span>
+              <RepostButton postId={post.id} reposted={post.reposted_by_me} count={post.repost_count} onChange={(u) => setPost((p) => p && ({ ...p, reposted_by_me: u.reposted, repost_count: u.repost_count }))} />
             </div>
           </article>
           <Comments

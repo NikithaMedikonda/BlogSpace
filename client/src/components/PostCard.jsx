@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 import { formatDate, getReadingTime } from '../utils'
+import RepostButton from './RepostButton'
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onRepost }) {
   const excerpt = post.content.length > 200 ? post.content.slice(0, 200).trimEnd() + '…' : post.content
   const to = `/posts/${post.id}`
   return (
@@ -16,12 +17,13 @@ export default function PostCard({ post }) {
         <h2 className="font-serif text-2xl font-bold leading-snug tracking-tight group-hover:underline">{post.title}</h2>
         <p className="mt-2 line-clamp-3 break-words font-serif text-lg leading-relaxed text-muted">{excerpt}</p>
       </Link>
-      <p className="mt-4 flex items-center gap-4 text-sm text-muted">
+      <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-muted">
         <time dateTime={post.created_at}>{formatDate(post.created_at)}</time>
         <span>{getReadingTime(post.content)} min read</span>
         <span aria-label={`${post.like_count} likes`}><span className="text-red-600" aria-hidden="true">♥</span> {post.like_count}</span>
         <span aria-label={`${post.comment_count} comments`}>💬 {post.comment_count}</span>
-      </p>
+        <RepostButton postId={post.id} reposted={post.reposted_by_me} count={post.repost_count} onChange={onRepost} />
+      </div>
     </article>
   )
 }

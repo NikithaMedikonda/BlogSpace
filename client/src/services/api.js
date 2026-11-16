@@ -30,6 +30,9 @@ export const fetchPost = (id) => request(`/posts/${id}`)
 export const createPost = (payload) => request('/posts', { method: 'POST', body: payload })
 export const deletePost = (id) => request(`/posts/${id}`, { method: 'DELETE' })
 
+export const repostPost = (id) => request(`/posts/${id}/repost`, { method: 'POST' })
+export const unrepostPost = (id) => request(`/posts/${id}/repost`, { method: 'DELETE' })
+
 export const likePost = (id) => request(`/posts/${id}/like`, { method: 'POST' })
 export const unlikePost = (id) => request(`/posts/${id}/like`, { method: 'DELETE' })
 export const fetchComments = (id) => request(`/posts/${id}/comments`)

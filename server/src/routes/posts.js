@@ -1,14 +1,16 @@
 import { Router } from 'express'
 import { getPosts, getPost, create, remove } from '../controllers/posts.js'
-import { like, unlike, getComments, createComment } from '../controllers/engagement.js'
+import { like, unlike, repost, unrepost, getComments, createComment } from '../controllers/engagement.js'
 import { requireAuth, optionalAuth } from '../middleware/auth.js'
 
 const router = Router()
-router.get('/', getPosts)
+router.get('/', optionalAuth, getPosts)
 router.get('/:id', optionalAuth, getPost)
 router.post('/', requireAuth, create)
 router.delete('/:id', requireAuth, remove)
 
+router.post('/:id/repost', requireAuth, repost)
+router.delete('/:id/repost', requireAuth, unrepost)
 router.post('/:id/like', requireAuth, like)
 router.delete('/:id/like', requireAuth, unlike)
 router.get('/:id/comments', getComments)
