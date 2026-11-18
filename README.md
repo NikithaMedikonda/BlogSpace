@@ -10,6 +10,8 @@ Full-stack blogging app: React (Vite + Tailwind CSS) client, Express API, Postgr
 The API runs on port 5001. Vite proxies `/api` to it.
 Set `CLIENT_ORIGIN` in `server/.env` to the Vite URL.
 
+The home page's **Start reading** button opens the story listing at `/posts`. The listing shows loading, empty, and retryable error states as appropriate.
+
 Reading time is calculated from each post's full content at 200 words per minute, rounded up with a one-minute minimum. It is shown on post cards and below the title on each post page. The comment section on a post is titled “Suggestions”.
 
 Like hearts are red on post cards and post pages, for signed-in and signed-out visitors.
