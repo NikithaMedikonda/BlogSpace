@@ -29,6 +29,13 @@ const { default: Home } = await server.ssrLoadModule('/src/pages/Home.jsx')
 const { default: App } = await server.ssrLoadModule('/src/App.jsx')
 const render = (element, path = '/') => renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: [path] }, element))
 
+test('home displays the Factory greeting banner', () => {
+  const home = render(React.createElement(App))
+  assert.match(home, /<aside aria-label="Factory greeting" class="[^"]+">\s*Hello from Factory\s*<\/aside>/)
+  const listing = render(React.createElement(App), '/posts')
+  assert.doesNotMatch(listing, /Hello from Factory/)
+})
+
 test('home displays a start reading button', () => {
   const html = render(React.createElement(Home))
   assert.match(html, /<a class="[^"]*rounded-full[^"]*" href="\/posts"[^>]*>Start reading<\/a>/)
