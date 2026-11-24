@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
+import Hello from './pages/Hello'
 import Posts from './pages/Posts'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -12,6 +13,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+      <Route path="/hello" element={<Hello />} />
       <Route path="/posts" element={<Posts />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />

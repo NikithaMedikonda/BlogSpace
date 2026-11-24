@@ -35,6 +35,20 @@ test('home displays a start reading button', () => {
   assert.doesNotMatch(html, /aria-busy="true"/)
 })
 
+test('home displays a Hello button', () => {
+  const html = render(React.createElement(Home))
+  assert.match(html, /<a class="[^"]*rounded-full[^"]*" href="\/hello"[^>]*>Hello<\/a>/)
+})
+
+test('Hello links to the new page', () => {
+  const home = render(React.createElement(App))
+  const destination = home.match(/href="([^"]+)"[^>]*>Hello<\/a>/)?.[1]
+  assert.equal(destination, '/hello')
+  const page = render(React.createElement(App), destination)
+  assert.match(page, />Hello<\/h1>/)
+  assert.doesNotMatch(page, /Page not found/)
+})
+
 test('start reading links to the stories listing route', () => {
   const home = render(React.createElement(App))
   const destination = home.match(/href="([^"]+)"[^>]*>Start reading<\/a>/)?.[1]
