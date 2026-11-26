@@ -16,7 +16,7 @@ The example URL uses placeholder credentials, not a guaranteed local PostgreSQL 
 
 If startup reports `PostgreSQL password missing`, supply those credentials before running the server or database setup. A wrong password still requires correcting the PostgreSQL role or credentials. For a PostgreSQL server deliberately configured for passwordless authentication (such as local peer or trust), set `PG_ALLOW_PASSWORDLESS=true` in `server/.env` instead; this does not bypass authentication on a server requiring a password.
 
-The home page displays a **Hello from Factory** banner. Its **Start reading** button opens the story listing at `/posts`. The listing shows loading, empty, and retryable error states as appropriate. The **Hello** button opens a new page at `/hello`.
+The home page displays a **Hello from Factory** banner. Its **Start reading** button opens the story listing at `/posts`. The listing shows loading, empty, and retryable error states as appropriate. The **Hello** and **Check** buttons open the Hello message page at `/hello`.
 
 Reading time is calculated from each post's full content at 200 words per minute, rounded up with a one-minute minimum. It is shown on post cards and below the title on each post page. The comment section on a post is titled “Suggestions”.
 

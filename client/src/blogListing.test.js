@@ -47,9 +47,23 @@ test('home displays a Hello button', () => {
   assert.match(html, /<a class="[^"]*rounded-full[^"]*" href="\/hello"[^>]*>Hello<\/a>/)
 })
 
+test('home displays a Check button', () => {
+  const html = render(React.createElement(Home))
+  assert.match(html, /<a class="[^"]*rounded-full[^"]*" href="\/hello"[^>]*>Check<\/a>/)
+})
+
 test('Hello links to the new page', () => {
   const home = render(React.createElement(App))
   const destination = home.match(/href="([^"]+)"[^>]*>Hello<\/a>/)?.[1]
+  assert.equal(destination, '/hello')
+  const page = render(React.createElement(App), destination)
+  assert.match(page, />Hello<\/h1>/)
+  assert.doesNotMatch(page, /Page not found/)
+})
+
+test('Check links to the Hello message page', () => {
+  const home = render(React.createElement(App))
+  const destination = home.match(/href="([^"]+)"[^>]*>Check<\/a>/)?.[1]
   assert.equal(destination, '/hello')
   const page = render(React.createElement(App), destination)
   assert.match(page, />Hello<\/h1>/)
