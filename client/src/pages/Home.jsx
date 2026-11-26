@@ -14,6 +14,7 @@ export default function Home() {
         <p className="mt-3 text-lg text-muted">Read what the community is writing — or write your own.</p>
         <Link to="/posts" className={`${btnPrimary} mt-5`}>Start reading</Link>
         <Link to="/hello" className={`${btnPrimary} mt-5 ml-3`}>Hello</Link>
+        <Link to="/hello" className={`${btnPrimary} mt-5 ml-3`}>Check</Link>
       </header>
     </Layout>
   )
